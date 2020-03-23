@@ -1,0 +1,17 @@
+<?php 
+// ----------------- CiDesa1 CONTROLLER------------------- //
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Post_Input_Form extends CI_Controller {
+			
+			
+			//$this->load->helper('form');
+			//$this->load->helper('url');
+            //$this->load->library('form_validation');
+	public function index()
+	{
+		$this->load->view('block-header');
+		$this->load->view('post-input-form-view');
+		$this->load->view('block-footer');
+	}
+}
