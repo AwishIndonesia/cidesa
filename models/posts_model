@@ -1,0 +1,48 @@
+<?php
+
+class Posts_Model extends CI_Model {
+
+		public $title;
+		public $excerpt;
+		public $content;
+		public $type;
+		public $status;
+		public $author;
+        public $editor;
+        public $date;
+        public $modified;
+		public $image;
+		public $link;
+		public $name;
+		public $category_id;
+		public $tag_id;
+		
+		
+	public function post_entry()
+	{
+		$title = $this->input->post('post-title');
+		$excerpt = $this->input->post('post-excerpt');
+		$type = $this->input->post('post-type');
+		$status = $this->input->post('post-status');
+		$content = $this->input->post('post-content');
+		$image = $this->input->post('post-image');
+		
+		$link = $this->input->post('post-content');
+		$name = $this->input->post('post-image');
+		
+		$author = 'adminis';
+		$editor = 'adminis';
+		$date = 'adminis';
+		$modified = 'adminis';
+ 
+		$post_data = array(
+			'post_title' => $title,
+			'post_excerpt' => $excerpt,
+			'post_type' => $type,
+			'post_status' => $status,
+			'post_content' => $content,
+			'post_image' => $image
+			);
+         $this->db->insert('posts', $post_data);
+	}
+}
