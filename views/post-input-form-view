@@ -1,0 +1,51 @@
+<!-- // ----------------- CiDesa1 //  -->
+
+<div id="container" class="container">	
+	
+<div id="container"><!-- BEGIN #container -->
+
+<h3>Form Input Posting</h3>
+<?php echo validation_errors(); ?>
+<?php echo form_open('post_input/entry'); ?> <!-- <form> -->	
+  <div class="form-group">
+    <label for="post-title">Judul Post</label>
+    <input type="text" class="form-control" id="text-judul-post" name="post-title" placeholder="">
+  </div>
+  
+  <div class="form-group">
+  <label for="post-excerpt">Kutipan Post:</label>
+  <textarea class="form-control" rows="3" id="post-excerpt" name="post-excerpt"></textarea>
+ </div> 
+  <div class="form-group">
+    <label for="post-type">Type Post</label>
+    <select multiple class="form-control" id="post-type" name="post-type">
+      <option>Page</option>
+      <option>Post</option>
+      <option>Foto</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="post-status">Status Post</label>
+    <select  class="form-control" id="post-status" name="post-status">
+      <option>Draft</option>
+      <option>Publish</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="post-content">Isi Post</label>
+    <textarea class="form-control" id="post-content" name="post-content" rows="5"></textarea>
+  </div>
+  <div class="form-group">
+      <input type="file" class="form-control-file border" id="post-image" name="post-image">
+    </div>
+  <button type="submit" class="btn btn-primary mb-2">Input</button>
+  
+</form> <!-- END .form-group -->
+
+
+</div><!-- END #container -->
+
+
+	
+</div><!-- END #container .container -->
+
