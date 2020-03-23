@@ -1,0 +1,35 @@
+<?php 
+// ----------------- CiDesa1 CONTROLLER------------------- //
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Post_Input extends CI_Controller {
+
+	public function __construct(){
+		parent::__construct();		
+		$this->load->model('posts_model');
+		//$this->load->helper('url');
+ 
+	}
+	
+	public function index()
+	{
+		$this->load->view('block-header');
+		$this->load->view('formsuccess');
+		$this->load->view('block-footer');
+	}
+	
+	public function entry()
+	{
+				$config['upload_path']          = './uploads/';
+                $config['allowed_types']        = 'gif|jpg|png';
+                $config['max_size']             = 100;
+                $config['max_width']            = 1024;
+                $config['max_height']           = 768;
+
+                $this->load->library('upload', $config);
+		
+		$this->posts_model->post_entry();
+		//redirect('crud/index');
+	}
+	
+}
