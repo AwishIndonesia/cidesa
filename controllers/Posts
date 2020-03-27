@@ -1,0 +1,58 @@
+<?php 
+// ----------------- CiDesa1 CONTROLLER------------------- //
+//defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Posts extends CI_Controller {
+	
+	 public function __construct()
+        {
+                parent::__construct();
+                $this->load->helper(array('form', 'url'));
+				$this->load->model('Posts_Model');
+				//$this->load->model('Catgories_Model');
+        }
+
+        public function index()
+        {
+                $this->input_form();
+        }
+		public function input_form()
+		{
+			$kategories['data'] = $this->Posts_Model->get_categories_post();
+					
+		$this->load->view('block-header');
+		//$error = array('error' => $this->upload->display_errors());
+		$this->load->view('post-input-form-view', $kategories );
+		$this->load->view('block-footer');
+		}
+
+        public function input()
+        {
+                //$config['upload_path']          = './uploads/';
+				$image_path = realpath(APPPATH . '../images');
+				$config['upload_path'] = $image_path;
+                $config['allowed_types']        = 'gif|jpg|png';
+                $config['max_size']             = 100;
+                $config['max_width']            = 1024;
+                $config['max_height']           = 768;
+
+                $this->load->library('upload', $config);
+				$this->load->model('posts_model');
+                if ( ! $this->upload->do_upload('post-image'))
+                {
+                        $error = array('error' => $this->upload->display_errors());
+
+                        $this->load->view('upload_form1', $error);
+                }
+                else
+                {
+                        $data = array('upload_data' => $this->upload->data());
+
+                        $this->load->view('upload_success1', $data);
+						$this->posts_model->new_post_entry($data);
+                }
+        }
+}
+	
+	
+?>
