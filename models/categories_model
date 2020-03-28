@@ -1,0 +1,56 @@
+<?php
+// ----------------- CiDesa1 MODELS ---- //
+class Categories_Model extends CI_Model {
+
+		
+		public $category_id;
+		public $name;
+		public $parent;
+		
+	public function __construct()
+    {
+                parent::__construct();
+                $this->load->helper(array('form', 'url'));
+				$this->load->library(array('upload'));
+    }
+		
+	public function new_category_entry()
+	{
+		$nama = $this->input->post('category-name');
+		$induk = $this->input->post('category-parent');
+		$keterangan = $this->input->post('category-description'); 
+		
+		$name = ucwords($nama);
+		$slug = strtolower($nama);   
+ 
+		$category_data = array(
+			'category_name' => $name,
+			'category_slug' => $slug,
+			'category_parent' => $induk,
+			'category_description' => $keterangan,
+			'category_group' => ''
+			
+			);
+		echo '<b>nama file : </b>'.$name;
+         $this->db->insert('categories', $category_data);
+	}
+	public function get_categories_table()
+	{
+		$query = $this->db->get('categories');
+
+			foreach ($query->result() as $row)
+			{
+				echo $row->category_name;
+				echo $row->category_slug;
+				echo $row->category_parent;
+				echo $row->category_description;
+				echo $row->category_group;
+			}
+		return $query->result();
+	}
+	public function get_categories_select()
+	{
+		$query = $this->db->get('categories');
+		return $query->result();
+	}
+}
