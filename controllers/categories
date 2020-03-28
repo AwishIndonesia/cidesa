@@ -1,0 +1,52 @@
+<?php 
+// ----------------- CiDesa1 CONTROLLER------------------- //
+//defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Categories extends CI_Controller {
+	
+	 public function __construct()
+        {
+                parent::__construct();
+                $this->load->helper(array('form', 'url'));
+				$this->load->model('Categories_Model');
+        }
+
+        public function index()
+        {
+                $this->input_form();
+        }
+		public function input_form()
+		{
+			$kategories = $this->Categories_Model->get_categories_select();
+			 
+			if (isset ($kategories)){
+				$kat_parent['data'] = $kategories;
+			}
+			else
+			{
+				$kat_parent['data'] = '';
+			}
+		$this->load->view('block-header');	
+		$this->load->view('category-input-form-view', $kat_parent );
+		$this->load->view('block-footer');
+		}
+		public function get_categories()
+		{
+			// ambil kategories
+			$this->Categories_Model->get_categories_select();	 
+		}
+
+        public function input()
+        {
+
+				$this->Categories_Model->new_category_entry();	 
+		}
+              
+        
+		public function list_categories()
+		{
+		}
+}
+	
+	
+?>
