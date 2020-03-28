@@ -1,0 +1,22 @@
+<?php	
+
+$query = $this->db->query("SELECT * FROM categories");
+
+if ($query->num_rows() > 0)
+{
+	foreach ($query->result() as $row)
+	{
+      ?>
+		<input class="form-check-input" type="checkbox"  name="kategori[]" value="<?php echo $row->category_id;?>" id="defaultCheck4" />
+		<label class="form-check-label" for="defaultCheck3">
+			<?php echo $row->category_name;?> checkbox
+		</label>
+		<?php
+	}
+			} else {  
+	echo '<div id="check-category"> <a href="categories/input_form">Masukkan Kategori </a></div>';
+	
+	}
+	
+	?>
+
