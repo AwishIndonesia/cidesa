@@ -1,0 +1,55 @@
+<!-- // ----------------- CiDesa1 //  -->
+
+<div id="container" class="container">	
+	
+<div id="container"><!-- BEGIN #container -->
+
+<h3>Form Input Posting</h3>
+<?php //echo validation_errors(); ?>
+<?php 
+
+echo form_open_multipart('categories/input'); ?> 
+  <div class="form-group">
+    <label for="category-name">Nama Kategori : </label>
+    <input type="text" class="form-control" id="category-name" name="category-name" placeholder="">
+  </div>
+
+   
+ <?php  
+
+if(is_array($data)){
+	?>
+	 <div class="form-group">
+    <label for="category-parent">Category Induk : </label>
+    <select class="form-control" id="category-parent" name="category-parent">
+      <option value="" >--</option>
+	<?php
+	foreach ($data as $row)
+	{
+			echo ' <option value='.$row->category_id.'>'.$row->category_name.'</option>';
+	}
+	?>
+	 </select>
+	</div>
+ <?php
+}
+else { echo '<p>data kategori masih kosong</p>';}
+							  ?>
+							  
+							  
+<div class="form-group">
+    <label for="category-description">Keterangan : </label>
+    <textarea class="form-control" id="category-description" name="category-description" rows="5"></textarea>
+  </div> 
+  </br>
+  <button type="submit" class="btn btn-primary mb-2">Input</button>
+  
+<?php echo form_close(); ?> <!-- END .form-group -->
+
+
+</div><!-- END #container -->
+
+
+	
+</div><!-- END #container .container -->
+
