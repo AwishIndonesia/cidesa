@@ -7,26 +7,76 @@ class Posts extends CI_Controller {
 	 public function __construct()
         {
                 parent::__construct();
-                $this->load->helper(array('form', 'url'));
-				$this->load->model('Posts_Model');
-				//$this->load->model('Catgories_Model');
+                $this->load->helper(array('form', 'url')); 
+				
         }
 
-        public function index()
+         public function index()
         {
-                $this->input_form();
+                
+				$this->input_form();
+        }
+		public function table_posts()
+        {
+               $tabel['data'] = $this->Posts_Model->get_table_posts();
+					
+				//$this->load->view('block-header');
+				$this->load->view('posts-table-view', $tabel );
+				//$this->load->view('block-footer');
         }
 		public function input_form()
 		{
-			$kategories['data'] = $this->Posts_Model->get_categories_post();
+			//$kategories['data'] = $this->Posts_Model->get_categories_post();
 					
-		$this->load->view('block-header');
-		//$error = array('error' => $this->upload->display_errors());
-		$this->load->view('post-input-form-view', $kategories );
-		$this->load->view('block-footer');
+		//$this->load->view('block-header');
+		$this->load->view('post-input-form-view', array('error' => ' ' )); //form-view
+		//$this->load->view('block-footer');
 		}
 
-        public function input()
+        public function input_action() // action input
+        {
+				$config['upload_path']          = './uploads/';
+                $config['allowed_types']        = 'gif|jpg|png';
+                $config['max_size']             = 100;
+                $config['max_width']            = 1024;
+                $config['max_height']           = 768;
+
+                $this->load->library('upload', $config);
+				//$this->load->model('Posts_Model'); //$this->load->model('Catgories_Model');
+                if ( ! $this->upload->do_upload('post-image'))
+                {
+                        $error = array('error' => $this->upload->display_errors());
+
+                        $this->load->view('upload_form', $error);
+                }
+                else
+                {
+                        $data = array('upload_data' => $this->upload->data());
+
+                        $this->load->view('upload_success', $data);
+                }
+        } // END   public function input()
+        
+        
+		public function input_categories()
+        {
+			$category_id = $this->input->post('kategori');
+
+            $categories_id = implode(',', $category_id);
+			echo $categories_id;
+            
+		}
+		public function edit_form($id)
+        {
+			
+			$get_edit['edit'] = $this->Posts_Model->get_edit_post($id);
+			 
+		$this->load->view('block-header');
+		$this->load->view('post-edit-form-view', $get_edit );
+		$this->load->view('block-footer');
+		}
+		
+		public function edit_action($id) // action input
         {
                 //$config['upload_path']          = './uploads/';
 				$image_path = realpath(APPPATH . '../images');
@@ -41,17 +91,20 @@ class Posts extends CI_Controller {
                 if ( ! $this->upload->do_upload('post-image'))
                 {
                         $error = array('error' => $this->upload->display_errors());
-
-                        $this->load->view('upload_form1', $error);
+						echo 'error';
+                       $this->load->view('upload_form', $error);
                 }
                 else
                 {
                         $data = array('upload_data' => $this->upload->data());
+						$data['categories_id'] = $this->input_categories()->$categories_id;
 
-                        $this->load->view('upload_success1', $data);
-						$this->posts_model->new_post_entry($data);
+                        //$this->load->view('upload_success1', $data);
+						$this->posts_model->edit_post_entry($id, $data);
+						echo 'sukses';
                 }
-        }
+        } // END   public function edit()
+		
 }
 	
 	
