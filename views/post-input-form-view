@@ -1,4 +1,4 @@
-<!-- // ----------------- CiDesa1 //  -->
+<!-- // ----------------- CiDesa1 VIEW //  -->
 
 <div id="container" class="container">	
 	
@@ -9,7 +9,7 @@
 <?php // echo $error;?>
 <?php // upload/do_upload //posts/input
 
-echo form_open_multipart('posts/input'); ?> 
+echo form_open_multipart('posts/input_action'); ?> 
   <div class="form-group">
     <label for="post-title">Judul Post</label>
     <input type="text" class="form-control" id="text-judul-post" name="post-title" placeholder="">
@@ -42,24 +42,13 @@ echo form_open_multipart('posts/input'); ?>
 	  <input type="file" class="form-control-file border" id="post-image" name="post-image">
     </div>
    <div class="form-check">
-	<input class="form-check-input" type="checkbox"  name="kategori[1]" value="newsletter" id="defaultCheck1" />
-		<label class="form-check-label" for="defaultCheck1">
-			Newsletter checkbox
-		</label>
-	<input class="form-check-input" type="checkbox"  name="kategori[2]" value="selebaran" id="defaultCheck2"  />
-		<label class="form-check-label" for="defaultCheck2">
-			Selebaran checkbox
-		</label>
-	<input class="form-check-input" type="checkbox" name="kategori[3]" value="majalah" id="defaultCheck3"  />
-		<label class="form-check-label" for="defaultCheck3">
-			Majalah checkbox
-		</label>
-	<input class="form-check-input" type="checkbox"  name="kategori[4]" value="penerangan" id="defaultCheck4" />
-		<label class="form-check-label" for="defaultCheck3">
-			Penerangan checkbox
-		</label>
+	
 		
-   </div></br>
+	<!-- Load Checkbx -->
+	<?php $this->load->view('checkbox-view'); ?>
+		
+   </div>
+   </br>
   <button type="submit" class="btn btn-primary mb-2">Input</button>
   
 <?php echo form_close(); ?> <!-- END .form-group -->
