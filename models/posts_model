@@ -16,14 +16,14 @@ class Posts_Model extends CI_Model {
 		public $name;
 		public $category_id;
 		public $tag_id;
-		
+
 	public function __construct()
     {
                 parent::__construct();
                 $this->load->helper(array('form', 'url'));
 				$this->load->library(array('upload'));
     }
-		
+
 	public function new_post_entry($data)
 	{
 		$title = $this->input->post('post-title');
@@ -38,16 +38,16 @@ class Posts_Model extends CI_Model {
 		$explode_title = explode(" ",$str_title);
 		$link = implode("-",$explode_title);
 		$name = implode(" ",$explode_title);
-		
+
 		$author = 98765;
 		$editor = 98765;
-		
+
 		$category_id = $this->input->post('kategori');
 		$categories_id = implode(',', $category_id);
-		
+
 		//$date = new DateTime();
 		$datetime = date("Y-m-d H:i:s");
- 
+
 		$post_data = array(
 			'post_title' => $title,
 			'post_excerpt' => $excerpt,
@@ -55,26 +55,28 @@ class Posts_Model extends CI_Model {
 			'post_status' => $status,
 			'post_content' => $content,
 			'post_image' => $image_name,
-			'post_date' => $datetime,			
+			'post_date' => $datetime,
 			'post_modified' => $datetime,
-			'post_author' => $author,			
-			'post_editor' => $editor,		
-			'post_link' => $link,		
-			'post_name' => $name,	
+			'post_author' => $author,
+			'post_editor' => $editor,
+			'post_link' => $link,
+			'post_name' => $name,
 			'category_id' => $categories_id
-			
+
 			);
 		//echo '<b>nama file : </b>'.$image_name;
          $this->db->insert('posts', $post_data);
 		 //echo '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <b>nama file : </b>'
 		 //.$upload_data['file_name'];
 	}
-	
+
 	public function get_edit_post($id)
 	{
 		$query = $this->db->get_where('posts', array('post_id' => $id));
-		return $query->result();
+		return $query;
 	}
+
+
 	public function edit_post_entry($id, $data)
 	{
 		$title = $this->input->post('post-title');
@@ -84,21 +86,27 @@ class Posts_Model extends CI_Model {
 		$content = $this->input->post('post-content');
 		//$image = $this->input->post('post-image');$upload_data['file_name']
 		//$image = $upload_data['file_name'];
-		$image_name = $data['upload_data']['file_name'];
+		if (isset($data['upload_data']['file_name'])) {
+			$image_name = $data['upload_data']['file_name'];
+		} else { $image_name = ''; }
 		$str_title = strtolower($title);
 		$explode_title = explode(" ",$str_title);
 		$link = implode("-",$explode_title);
 		$name = implode(" ",$explode_title);
-		
-		$author = 1234567;
-		$editor = 1234567;
-		
+
+		$author = 98765;
+		$editor = 98765;
+
+		       // $service_name = implode(', ', $_POST['service_name']);
 		$category_id = $this->input->post('kategori');
+		if (empty($category_id)) { $categories_id = '0';} else {
 		$categories_id = implode(',', $category_id);
- 
+		//echo $categories_id;
+		}
+
 		//$date = new DateTime();
 		$datetime = date("Y-m-d H:i:s");
- 
+
 		$post_data = array(
 			'post_title' => $title,
 			'post_excerpt' => $excerpt,
@@ -106,29 +114,65 @@ class Posts_Model extends CI_Model {
 			'post_status' => $status,
 			'post_content' => $content,
 			'post_image' => $image_name,
-			'post_date' => $datetime,			
+			'post_date' => $datetime,
 			'post_modified' => $datetime,
-			'post_author' => $author,			
-			'post_editor' => $editor,		
-			'post_link' => $link,		
-			'post_name' => $name,	
+			'post_author' => $author,
+			'post_editor' => $editor,
+			'post_link' => $link,
+			'post_name' => $name,
 			'category_id' => $categories_id
-			
+
 			);
 		echo '<b>nama file : </b>'.$image_name;
 		$this->db->where('post_id', $id);
-		$this->db->update('posts', $post_data); 
+		$this->db->update('posts', $post_data);
 	} // END Edit post
-	
+
 	public function get_categories_post()
 	{
 		$query = $this->db->get('categories');
 		return $query->result();
 	}
-	
+
 	public function get_table_posts()
 	{
 		$query = $this->db->get('posts');
 		return $query->result();
 	}
+	public function get_detail_post($id)
+	{
+		// posts // categories // tags /comments
+		$this->db->where('post_id', $id);
+		$query = $this->db->get('posts');
+		return $query;
+	}
+	public function get_category_name_post($id_cat)
+	{
+		// posts // categories // tags /comments
+		$this->db->where('category_id', $id_cat);
+		$query = $this->db->get('categories');
+		return $query;
+	}
+	public function get_tags_post($id)
+	{
+		// posts // categories // tags /comments
+		$this->db->where('post_id', $id);
+		$query = $this->db->get('tags');
+		return $query->result();
+	}
+	public function get_comments_post($id)
+	{
+		// posts // categories // tags /comments
+		$this->db->where('post_id', $id);
+		$query = $this->db->get('comments');
+		return $query->result();
+	}
+	public function get_delete_post($id)
+	{
+		// posts // categories // tags /comments
+		$this->db->where('post_id', $id);
+		$query = $this->db->delete('posts');
+		return $query;
+	}
+
 }
