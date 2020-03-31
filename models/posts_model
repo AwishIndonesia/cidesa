@@ -1,5 +1,5 @@
 <?php
-// ----------------- CiDesa1 MODELS ---- //
+// ----------------- CiDesa0 MODELS ---- //
 class Posts_Model extends CI_Model {
 
 		public $title;
@@ -24,58 +24,58 @@ class Posts_Model extends CI_Model {
 				$this->load->library(array('upload'));
     }
 
-	public function new_post_entry($data)
-	{
-		$title = $this->input->post('post-title');
-		$excerpt = $this->input->post('post-excerpt');
-		$type = $this->input->post('post-type');
-		$status = $this->input->post('post-status');
-		$content = $this->input->post('post-content');
-		//$image = $this->input->post('post-image');$upload_data['file_name']
-		//$image = $upload_data['file_name'];
-		$image_name = $data['upload_data']['file_name'];
-		$str_title = strtolower($title);
-		$explode_title = explode(" ",$str_title);
-		$link = implode("-",$explode_title);
-		$name = implode(" ",$explode_title);
+		public function new_post_entry($data)
+		{
+			$title = $this->input->post('post-title');
+			$excerpt = $this->input->post('post-excerpt');
+			$type = $this->input->post('post-type');
+			$status = $this->input->post('post-status');
+			$content = $this->input->post('post-content');
+			//$image = $this->input->post('post-image');$upload_data['file_name']
+			//$image = $upload_data['file_name'];
 
-		$author = 98765;
-		$editor = 98765;
+			$image_name = $data['upload_data']['file_name'];
+			$str_title = strtolower($title);
+			$explode_title = explode(" ",$str_title);
+			$link = implode("-",$explode_title);
+			$name = implode(" ",$explode_title);
 
-		$category_id = $this->input->post('kategori');
-		$categories_id = implode(',', $category_id);
+			$author = 98765;
+			$editor = 98765;
 
-		//$date = new DateTime();
-		$datetime = date("Y-m-d H:i:s");
+			$category_id = $this->input->post('kategori');
+			$categories_id = implode(',', $category_id);
 
-		$post_data = array(
-			'post_title' => $title,
-			'post_excerpt' => $excerpt,
-			'post_type' => $type,
-			'post_status' => $status,
-			'post_content' => $content,
-			'post_image' => $image_name,
-			'post_date' => $datetime,
-			'post_modified' => $datetime,
-			'post_author' => $author,
-			'post_editor' => $editor,
-			'post_link' => $link,
-			'post_name' => $name,
-			'category_id' => $categories_id
+			//$date = new DateTime();
+			$datetime = date("Y-m-d H:i:s");
 
-			);
-		//echo '<b>nama file : </b>'.$image_name;
-         $this->db->insert('posts', $post_data);
-		 //echo '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <b>nama file : </b>'
-		 //.$upload_data['file_name'];
-	}
+			$post_data = array(
+				'post_title' => $title,
+				'post_excerpt' => $excerpt,
+				'post_type' => $type,
+				'post_status' => $status,
+				'post_content' => $content,
+				'post_image' => $image_name,
+				'post_date' => $datetime,
+				'post_modified' => $datetime,
+				'post_author' => $author,
+				'post_editor' => $editor,
+				'post_link' => $link,
+				'post_name' => $name,
+				'category_id' => $categories_id
+
+				);
+			//echo '<b>nama file : </b>'.$image_name;
+	         $this->db->insert('posts', $post_data);
+			 //echo '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <b>nama file : </b>'
+			 //.$upload_data['file_name'];
+		} // END New Post Entry
 
 	public function get_edit_post($id)
 	{
 		$query = $this->db->get_where('posts', array('post_id' => $id));
 		return $query;
 	}
-
 
 	public function edit_post_entry($id, $data)
 	{
@@ -88,7 +88,10 @@ class Posts_Model extends CI_Model {
 		//$image = $upload_data['file_name'];
 		if (isset($data['upload_data']['file_name'])) {
 			$image_name = $data['upload_data']['file_name'];
-		} else { $image_name = ''; }
+		} else {
+				$image_name  = $this->get_edit_post($id)->row()->post_image;
+
+			}
 		$str_title = strtolower($title);
 		$explode_title = explode(" ",$str_title);
 		$link = implode("-",$explode_title);
@@ -126,7 +129,7 @@ class Posts_Model extends CI_Model {
 		echo '<b>nama file : </b>'.$image_name;
 		$this->db->where('post_id', $id);
 		$this->db->update('posts', $post_data);
-	} // END Edit post
+	} // END Edit post Entry
 
 	public function get_categories_post()
 	{
@@ -174,5 +177,22 @@ class Posts_Model extends CI_Model {
 		$query = $this->db->delete('posts');
 		return $query;
 	}
+	public function remove_post_image($post_image)
+	{
+		// kosongkan post_image
+		// posts // categories // tags /comments
+		$this->db->where('post_image', $post_image);
+		$query1 = $this->db->get('posts');
+		//return $query1;
+		foreach ($query1->result() as $row)
+		{
+		        echo $row->post_id;
+						$this->db->set('post_image', '');
+						$this->db->where('post_id', $row->post_id);
+						$this->db->update('posts');
+						return $query2;
+		}
+
+		}
 
 }
