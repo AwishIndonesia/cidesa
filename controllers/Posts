@@ -1,5 +1,5 @@
 <?php
-// ----------------- CiDesa1 CONTROLLER------------------- //
+// ----------------- CiDesa0 CONTROLLER------------------- //
 //defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Posts extends CI_Controller {
@@ -7,8 +7,8 @@ class Posts extends CI_Controller {
 	 public function __construct()
         {
                 parent::__construct();
-                $this->load->helper(array('form', 'url'));
-
+                $this->load->helper(array('form', 'url', 'file'));
+							//	$this->load->model('Posts_Model');
         }
 
          public function index()
@@ -35,33 +35,37 @@ class Posts extends CI_Controller {
 		}
 
 
-        public function input_action() // action input
-        {
-							// date("Y/m/d")
-								$config['upload_path']          = './uploads/';
-                $config['allowed_types']        = 'gif|jpg|png';
-                $config['max_size']             = 100;
-                $config['max_width']            = 1024;
-                $config['max_height']           = 768;
+		public function input_action() // action input
+		{
+					// date("Y/m/d")
+						$config['upload_path']          = './uploads/';
+						$config['allowed_types']        = 'gif|jpg|png';
+						$config['max_size']             = 100;
+						$config['max_width']            = 1024;
+						$config['max_height']           = 768;
 
-                $this->load->library('upload', $config);
-                if ( ! $this->upload->do_upload('post-image'))
-                {
-                        $error = array('error' => $this->upload->display_errors());
+						$this->load->library('upload', $config);
+						if ( ! $this->upload->do_upload('post-image'))
+						{
+										//$error = array('error' => $this->upload->display_errors());
+										//$this->load->view('upload_form', $error);
+										echo 'upload tanpa gamnbar';
+										$data = array('upload_data' => $this->upload->data());
+										$this->load->model('Posts_Model');
+										$this->Posts_Model->new_post_entry($data);
+										$this->load->view('upload_success', $data);
+						}
+						else
+						{
+										$data = array('upload_data' => $this->upload->data());
+										$this->load->model('Posts_Model');
+										$this->Posts_Model->new_post_entry($data);
+										$this->load->view('upload_success', $data);
+						}
 
-                        $this->load->view('upload_form', $error);
-                }
-                else
-                {
-                        $data = array('upload_data' => $this->upload->data());
-						$this->load->model('Posts_Model');
-						$this->Posts_Model->new_post_entry($data);
-                        $this->load->view('upload_success', $data);
-                }
 
 
-
-        } // END   public function input_action()
+		} // END   public function input_action()
 
 
 		public function input_categories()
@@ -99,31 +103,31 @@ class Posts extends CI_Controller {
 
 			   if ( ! $this->upload->do_upload('post-image'))
                 {
-						$this->edit_noimage($id);
+											$this->edit_noimage($id);
                         //$error = array('error' => $this->upload->display_errors());
                         //$this->load->view('upload_form', $error);
-                }
-                else
-                {
 
-                        $data = array('upload_data' => $this->upload->data());
-						$this->load->model('Posts_Model');
-                        $this->load->view('upload_success', $data);
+								}
+								else
+								{
+									$data = array('upload_data' => $this->upload->data());
+									$this->load->model('Posts_Model');
+									$this->load->view('upload_success', $data);
 
-
-						//$data['categories_id'] = $this->input_categories()->$categories_id;
-						if ( $this->upload->do_upload('post-image'))
-						{
-							$post_image_old = $this->Posts_Model->get_edit_post($id)->row()->post_image;
-							echo $post_image_old;
-							$this->edit_post_delete_image($post_image_old);
-						}
+									//$data['categories_id'] = $this->input_categories()->$categories_id;
+									if ( $this->upload->do_upload('post-image'))
+									{
+										$post_image_old = $this->Posts_Model->get_edit_post($id)->row()->post_image;
+									//	echo $post_image_old;
+									//	$this->edit_post_delete_image($post_image_old);
+									}
 
                         //$this->load->view('upload_success1', $data);
-						$this->Posts_Model->edit_post_entry($id, $data);
-						echo 'sukses';
+										$this->Posts_Model->edit_post_entry($id, $data);
+										echo 'sukses';
                 }
         } // END   public function edit()
+
 		public function edit_post_delete_image($post_image_old)
 		{
 
@@ -134,22 +138,22 @@ class Posts extends CI_Controller {
 
 
 						//$data['categories_id'] = $this->input_categories()->$categories_id;
-						if ( $this->upload->do_upload('post-image'))
-						{
-							$post_image_old = $this->Posts_Model->get_edit_post($id)->post_image;
+							$error = array('error' => $this->upload->display_errors());
+							$post_image_old = $this->Posts_Model->get_edit_post($id)->row()->post_image;
 							echo $post_image_old;
 							$this->edit_post_delete_image($post_image_old);
-						}
+							foreach ($error as $value){ echo $value; }
 
-                        //$this->load->view('upload_success1', $data);
-						$data = '';
+            //$this->load->view('upload_success1', $data);
+						$data['post_image_old'] = $post_image_old;
 						$this->Posts_Model->edit_post_entry($id, $data);
-						echo 'sukses';
-		}
+						echo 'sukses no image';
+		} // END Edit No Image
 		public function detail($id)
 		{
 				$this->load->model('Posts_Model');
 				$detail['data'] = $this->Posts_Model->get_detail_post($id)->result();
+				$detail['nama_foto'] = $this->Posts_Model->get_detail_post($id)->row()->post_image;
 				/*
 					$kategories = $this->Posts_Model->get_detail_post($id)->row()->category_id;
 					$kategori = explode (',', $kategories);
@@ -170,6 +174,15 @@ class Posts extends CI_Controller {
 			$this->load->model('Posts_Model');
 			$this->Posts_Model->get_delete_post($id);
 			$this->table();
+		}
+		public function remove_post_image($post_image)
+		{
+		//	unlink(base_url().'uploads/'.$post_image);
+		//return array_map('unlink', glob(FCPATH."./uploads/$post_image.*"));
+		unlink("./uploads/$post_image");
+		$this->Posts_Model->remove_post_image($post_image);
+		// kosongkan post_image
+
 		}
 
 }
