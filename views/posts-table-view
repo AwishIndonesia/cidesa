@@ -1,0 +1,51 @@
+<!-- // ----------------- CiDesa1 VIEW //  -->
+<style>
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+  background-color: #ffeeba;
+}
+</style>
+<div id="container" class="container">
+
+<div id="container"><!-- BEGIN #container -->
+
+<h3>Tabel Posting</h3>
+
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">ID</th>
+      <th scope="col">Title</th>
+      <th scope="col">Type</th>
+      <th scope="col">Status</th>
+      <th scope="col">Image</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+
+  <?php
+ $n = 1;
+	foreach ($data as $row) {
+		echo '<tr>      <th scope="row">'.$n.'</th>
+     <td>'.$row->post_id.'</td>
+     <td>'.$row->post_title.'</td>
+     <td>'.$row->post_type.'</td>
+     <td>'.$row->post_status.'</td>
+     <td>'.$row->post_image.'</td>
+		<td><a href='. base_url().'index.php/posts/edit_form/'.$row->post_id.' id='.$row->post_id.'>Edit</a> |
+    <a href='. base_url().'index.php/posts/delete/'.$row->post_id.' id='.$row->post_id.'> Hapus </a> |
+		<a href='. base_url().'index.php/posts/detail/'.$row->post_id.' id='.$row->post_id.'> Detail  </a>
+		</td>  </tr>';
+		$n++;
+	}
+	?>
+
+  </tbody>
+</table>
+
+</div><!-- END #container -->
+
+
+
+</div><!-- END #container .container -->
