@@ -19,7 +19,7 @@ class Posts extends CI_Controller {
 
 				public function pagination_config()
 				{
-				
+
 
 				}
 		public function table()
