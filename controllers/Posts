@@ -1,5 +1,5 @@
 <?php
-// ----------------- CiDesa0 CONTROLLER------------------- //
+// ----------------- CiDesa1 CONTROLLER------------------- //
 //defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Posts extends CI_Controller {
@@ -16,13 +16,31 @@ class Posts extends CI_Controller {
 
 				$this->input_form();
         }
+
+				public function pagination_config()
+				{
+				
+
+				}
 		public function table()
         {
-				$this->load->model('Posts_Model');
-				$tabel['data'] = $this->Posts_Model->get_table_posts();
+					$this->load->library('pagination');
+					$this->load->model('Posts_Model');
+					//$config['base_url'] = 'http://localhost/cidesa1/index.php/posts/table';
+					$config['base_url'] = site_url('posts/table');
+					$config['total_rows'] = count($this->Posts_Model->get_table_posts()->result());
+					$config['per_page'] = $limit = 10;
+					$config["uri_segment"] = 3; //
+					echo 'total_rows : '.$config['total_rows'];
+			//	$this->load->model('Posts_Model');
+				$this->pagination->initialize($config);
+				$data['page'] = $start = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0; //
+
+				$tabel['data'] = $this->Posts_Model->get_table_posts_pag($limit, $start)->result();
 
 				$this->load->view('block-header');
 				$this->load->view('posts-table-view', $tabel );
+				echo $this->pagination->create_links();
 				$this->load->view('block-footer');
         }
 		public function input_form()
