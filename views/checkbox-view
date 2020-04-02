@@ -1,22 +1,37 @@
-<?php	
+<!-- Checbox View -->
+<h3>Checbox View</h3>
+<?php
 
 $query = $this->db->query("SELECT * FROM categories");
 
 if ($query->num_rows() > 0)
 {
+	//$checkeds = $row->category_id; // kategori post
+	echo '<br>cek $checkeds : '.$checkeds.' '; // kategori post
+	$checked = explode(',', $checkeds);
+	$id_categories = implode(' ', $checked);
+
+	echo '<br>cek $id_categories : '.$id_categories.'<br>';
+	//$checkeds_id = array($checkeds);
 	foreach ($query->result() as $row)
 	{
-      ?>
-		<input class="form-check-input" type="checkbox"  name="kategori[]" value="<?php echo $row->category_id;?>" id="defaultCheck4" />
+		echo $row->category_id;
+		$kate = '/'.$row->category_id.'/';
+		//$hasilcek = preg_match($kate, $id_categories);
+		echo '<b> $kate : '.$kate.' </b>';
+		 if (preg_match($kate, $id_categories)) { $checkid = 'checked="checked"'; } else { $checkid = '' ;}
+
+		?>
+		<input type="checkbox" name="kategori[]" value="<?php echo $row->category_id;?>" <?php echo $checkid; ?> class="form-check-input"  id="defaultCheck4" />
 		<label class="form-check-label" for="defaultCheck3">
-			<?php echo $row->category_name;?> checkbox
+			<?php echo  ':'.$row->category_name;?> checkbox // <?php echo $checkid; ?> //
 		</label>
 		<?php
-	}
-			} else {  
-	echo '<div id="check-category"> <a href="categories/input_form">Masukkan Kategori </a></div>';
-	
-	}
-	
-	?>
 
+	} // foreach($checked as $element)
+			} else {
+	echo '<div id="check-category"> <a href="categories/input_form">Masukkan Kategori </a></div>';
+
+	}
+
+	?>
