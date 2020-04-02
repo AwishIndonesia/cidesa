@@ -4,7 +4,7 @@
 
 <div id="container"><!-- BEGIN #container -->
 
-<h3>Form Input Posting</h3>
+<h3>Form Edit Posting</h3>
 <?php //echo validation_errors(); ?>
 <?php // echo $error;?>
 <?php // upload/do_upload //posts/input ?>
@@ -25,16 +25,21 @@ echo form_open_multipart('posts/edit_action/'.$id); ?>
   <div class="form-group">
     <label for="post-type">Type Post</label>
     <select multiple class="form-control" id="post-type" name="post-type">
-      <option>Page</option>
-      <option>Post</option>
-      <option>Foto</option>
+			<?php if ($row->post_type === 'Page'){ $type1 = 'selected="selected"'; } else { $type1 = '' ;} ?>
+      <option <?php echo $type1 ;?>>Page</option>
+			<?php if ($row->post_type === 'Post'){ $type2 = 'selected="selected"'; } else { $type2 = '' ;} ?>
+      <option <?php echo $type2 ;?>>Post</option>
+			<?php if ($row->post_type === 'Foto'){ $type3 = 'selected="selected"'; } else { $type3 = '' ;} ?>
+      <option <?php echo $type3 ;?>>Foto</option>
     </select>
   </div>
   <div class="form-group">
     <label for="post-status">Status Post</label>
     <select  class="form-control" id="post-status" name="post-status">
-      <option>Draft</option>
-      <option>Publish</option>
+			<?php if ($row->post_status === 'Draft'){ $selsta1 = 'selected="selected"'; } else { $selsta1 = '' ;} ?>
+      <option <?php echo $selsta1 ;?> >Draft</option>
+			<?php if ($row->post_status === 'Publish'){ $selsta2 = 'selected="selected"'; } else { $selsta2 = '' ;} ?>
+      <option <?php echo $selsta2 ;?> >Publish</option>
     </select>
   </div>
   <div class="form-group">
@@ -45,14 +50,18 @@ echo form_open_multipart('posts/edit_action/'.$id); ?>
 	  <input type="file" class="form-control-file border" id="post-image" name="post-image">
     </div>
 	<div class="form-group">
-	  Remove Image / Media
+	  <a href="<?php echo base_url(); ?>index.php/posts/remove_post_image/<?php echo $row->post_image; ?>">Remove Image : <?php echo $row->post_image; ?></a> / Media
     </div>
    <div class="form-check">
 		<!-- Load Checkbx -->
-	<?php $this->load->view('checkbox-view'); ?>
+
+	<?php
+	$data['checkeds'] = $row->category_id; // kategori post
+	 $this->load->view('checkbox-view', $data);
+	  ?>
    </div>
    </br>
-  <button type="submit" class="btn btn-primary mb-2">Update</button>
+  <button type="submit" class="btn btn-primary mb-2">Save</button>
 
 <?php echo form_close(); ?> <!-- END .form-group -->
 <?php
