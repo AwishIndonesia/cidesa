@@ -1,5 +1,5 @@
 <?php
-// ----------------- CiDesa1 CONTROLLER------------------- //
+// ----------------- CiDesa2 CONTROLLER------------------- //
 //defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Posts extends CI_Controller {
@@ -14,12 +14,11 @@ class Posts extends CI_Controller {
          public function index()
         {
 
-				$this->input_form();
+				$this->table();
         }
 
 				public function pagination_config()
 				{
-
 
 				}
 		public function table()
@@ -30,26 +29,52 @@ class Posts extends CI_Controller {
 					$config['base_url'] = site_url('posts/table');
 					$config['total_rows'] = count($this->Posts_Model->get_table_posts()->result());
 					$config['per_page'] = $limit = 10;
-					$config["uri_segment"] = 3; //
-					echo 'total_rows : '.$config['total_rows'];
+					$config['uri_segment'] = 3; //
+					$config['num_links'] = 2;
+
+					$config['full_tag_open'] = '<nav aria-label="Page navigation example"> <ul class="pagination">'; //'<p>';
+					$config['full_tag_close'] = ' </ul> </nav>'; //'</p>';
+					$config['first_link'] = 'First';
+					$config['first_tag_open'] = '<li class="page-item"><div class="page-link">';
+					$config['first_tag_close'] = '</div</li>';
+					$config['first_url'] = '';
+					$config['last_link'] = 'Last';
+					$config['last_tag_open'] = '<li class="page-item"><div class="page-link">';
+					$config['last_tag_close'] = '</div</li>';
+
+					$config['next_link'] = '&gt;';
+					$config['next_tag_open'] = '<li class="page-item"><div class="page-link">'; //'<div>';
+					$config['next_tag_close'] = '</div</li>'; //'</div>';
+					$config['prev_link'] = '&lt;';
+					$config['prev_tag_open'] = '<li class="page-item"><div class="page-link">'; //'<div>';
+					$config['prev_tag_close'] = '</div</li>'; //'</div>';
+
+					$config['cur_tag_open'] = '<li class="page-item"> <div class="page-link"><b>';
+					$config['cur_tag_close'] = '</b></div></li>';
+					$config['num_tag_open'] = '<li class="page-item"> <div class="page-link">';
+					$config['num_tag_close'] = '</div></li>';
+
+					//$this->pagination_config();
 			//	$this->load->model('Posts_Model');
 				$this->pagination->initialize($config);
 				$data['page'] = $start = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0; //
-
 				$tabel['data'] = $this->Posts_Model->get_table_posts_pag($limit, $start)->result();
-
-				$this->load->view('block-header');
-				$this->load->view('posts-table-view', $tabel );
-				echo $this->pagination->create_links();
-				$this->load->view('block-footer');
+				$this->load->view('admin/block-header');
+				$this->load->view('admin/posts-table-view', $tabel );
+				$this->load->view('admin/block-footer');
         }
+
+		public function tabel_filter()
+		{
+
+				}
 		public function input_form()
 		{
 			//$kategories['data'] = $this->Posts_Model->get_categories_post();
 
-		$this->load->view('block-header');
-		$this->load->view('post-input-form-view', array('error' => ' ' )); //form-view
-		$this->load->view('block-footer');
+		$this->load->view('admin/block-header');
+		$this->load->view('admin/post-input-form-view', array('error' => ' ' )); //form-view
+		$this->load->view('admin/block-footer');
 		}
 
 
@@ -63,23 +88,28 @@ class Posts extends CI_Controller {
 						$config['max_height']           = 768;
 
 						$this->load->library('upload', $config);
+						$id = $this->input->post('post-rand');
 						if ( ! $this->upload->do_upload('post-image'))
 						{
-										//$error = array('error' => $this->upload->display_errors());
-										//$this->load->view('upload_form', $error);
-										echo 'upload tanpa gamnbar';
+										$error = array('error' => $this->upload->display_errors());
 										$data = array('upload_data' => $this->upload->data());
+										foreach ($error as $value){ echo $value; }
+										echo 'upload tanpa gambar';
 										$this->load->model('Posts_Model');
 										$this->Posts_Model->new_post_entry($data);
 										$this->load->view('upload_success', $data);
+										$thid->get_detail_post($id);
 						}
 						else
 						{
 										$data = array('upload_data' => $this->upload->data());
+										echo 'ter upload dengan gambar';
 										$this->load->model('Posts_Model');
 										$this->Posts_Model->new_post_entry($data);
-										$this->load->view('upload_success', $data);
+									//	$this->load->view('upload_success', $data);
+										$thid->get_detail_post($id);
 						}
+						$thid->get_detail_post($id);
 
 
 
@@ -98,12 +128,11 @@ class Posts extends CI_Controller {
         {
 			$this->load->model('Posts_Model');
 			$get_edit['edit'] = $this->Posts_Model->get_edit_post($id)->result();
-			$post_image_old = $this->Posts_Model->get_edit_post($id)->row()->post_image;
+		//	$post_image_old = $this->Posts_Model->get_edit_post($id)->row()->post_image; // echo $post_image_old;
 
-			echo $post_image_old;
-		$this->load->view('block-header');
-		$this->load->view('post-edit-form-view', $get_edit );
-		$this->load->view('block-footer');
+		$this->load->view('admin/block-header');
+		$this->load->view('admin/post-edit-form-view', $get_edit );
+		$this->load->view('admin/block-footer');
 		}
 
 		public function edit_action($id) // action input
@@ -122,28 +151,21 @@ class Posts extends CI_Controller {
 			   if ( ! $this->upload->do_upload('post-image'))
                 {
 											$this->edit_noimage($id);
-                        //$error = array('error' => $this->upload->display_errors());
-                        //$this->load->view('upload_form', $error);
-
 								}
 								else
 								{
 									$data = array('upload_data' => $this->upload->data());
 									$this->load->model('Posts_Model');
-									$this->load->view('upload_success', $data);
-
+									//$this->load->view('upload_success', $data);
 									//$data['categories_id'] = $this->input_categories()->$categories_id;
 									if ( $this->upload->do_upload('post-image'))
 									{
 										$post_image_old = $this->Posts_Model->get_edit_post($id)->row()->post_image;
-									//	echo $post_image_old;
-									//	$this->edit_post_delete_image($post_image_old);
-									}
-
-                        //$this->load->view('upload_success1', $data);
 										$this->Posts_Model->edit_post_entry($id, $data);
-										echo 'sukses';
-                }
+										$this->detail($id);
+										echo 'sukses upload gambar';
+                } }
+
         } // END   public function edit()
 
 		public function edit_post_delete_image($post_image_old)
@@ -153,20 +175,19 @@ class Posts extends CI_Controller {
 		public function edit_noimage($id)
 		{
 						$this->load->model('Posts_Model');
-
-
 						//$data['categories_id'] = $this->input_categories()->$categories_id;
 							$error = array('error' => $this->upload->display_errors());
 							$post_image_old = $this->Posts_Model->get_edit_post($id)->row()->post_image;
-							echo $post_image_old;
+							//echo $post_image_old;
 							$this->edit_post_delete_image($post_image_old);
 							foreach ($error as $value){ echo $value; }
-
             //$this->load->view('upload_success1', $data);
 						$data['post_image_old'] = $post_image_old;
 						$this->Posts_Model->edit_post_entry($id, $data);
-						echo 'sukses no image';
+						//echo 'sukses no image';
+						$this->detail($id);
 		} // END Edit No Image
+
 		public function detail($id)
 		{
 				$this->load->model('Posts_Model');
@@ -182,9 +203,9 @@ class Posts extends CI_Controller {
 						echo $name_cat.', ';
 					}
 				*/
-				$this->load->view('block-header');
-				$this->load->view('posts-detail-view', $detail );
-				$this->load->view('block-footer');
+				$this->load->view('admin/block-header');
+				$this->load->view('admin/post-detail-view', $detail );
+				$this->load->view('admin/block-footer');
 
 		}
 		public function delete($id)
@@ -197,10 +218,25 @@ class Posts extends CI_Controller {
 		{
 		//	unlink(base_url().'uploads/'.$post_image);
 		//return array_map('unlink', glob(FCPATH."./uploads/$post_image.*"));
+		$this->load->model('Posts_Model');
 		unlink("./uploads/$post_image");
 		$this->Posts_Model->remove_post_image($post_image);
 		// kosongkan post_image
 
+		}
+
+
+		public function kumpulan_idtag(){
+			$this->load->model('Posts_Model');
+			$namas_tag = array('Mexico',  'dallas');
+			foreach($namas_tag as $nama_tag) {
+				$kumpulan_id_tagss =  $this->Posts_Model->get_idtag_byname($nama_tag)->row();
+				$names[] =  $kumpulan_id_tagss->tag_name;
+				// $names[] = $kumpulan_id_tag;
+			}
+			$implode_id_tag = implode(', ', $names);
+			// implode, satukan id tag menjadi satu variabel
+			echo '<br>kumpulan namas tag : '.$implode_id_tag;
 		}
 
 }
