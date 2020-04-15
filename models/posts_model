@@ -1,5 +1,5 @@
 <?php
-// ----------------- CiDesa0 MODELS ---- //
+//  CiDesa2 MODELS  //
 class Posts_Model extends CI_Model {
 
 		public $title;
@@ -21,15 +21,25 @@ class Posts_Model extends CI_Model {
     {
                 parent::__construct();
                 $this->load->helper(array('form', 'url'));
-				$this->load->library(array('upload'));
+								$this->load->library(array('upload'));
     }
+
+		public function get_check_idpost($post_id)
+		{
+			$query = $this->db->get_where('posts', array('post_id' => $post_id));
+			return $query;
+		}
 
 		public function new_post_entry($data)
 		{
+			//$post_id = random_int(10, 999);
+			$post_id = $this->input->post('post-rand');
 			$title = $this->input->post('post-title');
+			$location = $this->input->post('post-location');
 			$excerpt = $this->input->post('post-excerpt');
 			$type = $this->input->post('post-type');
 			$status = $this->input->post('post-status');
+			if (!isset($status)) { $status = 'Draft';} else {$status = $this->input->post('post-status');}
 			$content = $this->input->post('post-content');
 			//$image = $this->input->post('post-image');$upload_data['file_name']
 			//$image = $upload_data['file_name'];
@@ -44,13 +54,20 @@ class Posts_Model extends CI_Model {
 			$editor = 98765;
 
 			$category_id = $this->input->post('kategori');
-			$categories_id = implode(',', $category_id);
+			if (empty($category_id)) { $categories_id = '0';} else {
+				$category_id = $this->input->post('kategori');
+				$categories_id = implode(',', $category_id);
+			//echo $categories_id;
+			}
+			$implode_id_tag = $this->input->post('post-tags');
 
 			//$date = new DateTime();
 			$datetime = date("Y-m-d H:i:s");
 
 			$post_data = array(
+				'post_id' => $post_id,
 				'post_title' => $title,
+				'post_location' => $location,
 				'post_excerpt' => $excerpt,
 				'post_type' => $type,
 				'post_status' => $status,
@@ -62,14 +79,47 @@ class Posts_Model extends CI_Model {
 				'post_editor' => $editor,
 				'post_link' => $link,
 				'post_name' => $name,
-				'category_id' => $categories_id
+				'category_id' => $categories_id,
+				'tag_id' => $implode_id_tag
 
 				);
 			//echo '<b>nama file : </b>'.$image_name;
-	         $this->db->insert('posts', $post_data);
+			echo $post_id;
+			$id = $post_id;
+			$cekid = $this->get_check_idpost($post_id);
+			$row = $cekid->row();
+
+				if (isset($row))
+				{
+					echo 'posting mungkin sudah diinputkan'; }
+				else { $this->db->insert('posts', $post_data); echo 'input data berhasil';
+				}
+
+
 			 //echo '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <b>nama file : </b>'
 			 //.$upload_data['file_name'];
 		} // END New Post Entry
+
+		public function cari_nama_tag($nama_tag)
+		{
+			$query = $this->db->get_where('tags', array('tag_name' => $nama_tag));
+			return $query;
+		}
+		public function get_idtag_byname($nama_tag)
+		{
+			$query = $this->db->get_where('tags', array('tag_name' => $nama_tag));
+			return $query;
+		}
+		public function get_idtag_lama($id)
+		{
+			$query = $this->db->get_where('posts', array('post_id' => $id));
+			return $query;
+		}
+		public function delete_tabeltag_kosong()
+		{
+			$query = $this->db->delete('tags', array('tag_name' => ''));
+			return $query;
+		}
 
 	public function get_edit_post($id)
 	{
@@ -80,9 +130,11 @@ class Posts_Model extends CI_Model {
 	public function edit_post_entry($id, $data)
 	{
 		$title = $this->input->post('post-title');
+		$location = $this->input->post('post-location');
 		$excerpt = $this->input->post('post-excerpt');
 		$type = $this->input->post('post-type');
 		$status = $this->input->post('post-status');
+		if (!isset($status)) { $status = 'Draft';} else {$status = $this->input->post('post-status');}
 		$content = $this->input->post('post-content');
 		//$image = $this->input->post('post-image');$upload_data['file_name']
 		//$image = $upload_data['file_name'];
@@ -107,26 +159,35 @@ class Posts_Model extends CI_Model {
 		//echo $categories_id;
 		}
 
+		$implode_id_tag = $this->input->post('post-tags');
+		if (isset($implode_id_tag)) {
+			$implode_id_tag = $this->input->post('post-tags');
+		} else {
+			$implode_id_tag = $this->get_idtag_lama($id)->row()->tag_id;
+		}
+
+
 		//$date = new DateTime();
 		$datetime = date("Y-m-d H:i:s");
 
 		$post_data = array(
 			'post_title' => $title,
+			'post_location' => $location,
 			'post_excerpt' => $excerpt,
 			'post_type' => $type,
 			'post_status' => $status,
 			'post_content' => $content,
 			'post_image' => $image_name,
-			'post_date' => $datetime,
+			//'post_date' => $datetime,
 			'post_modified' => $datetime,
 			'post_author' => $author,
 			'post_editor' => $editor,
 			'post_link' => $link,
 			'post_name' => $name,
-			'category_id' => $categories_id
-
+			'category_id' => $categories_id,
+			'tag_id' => $implode_id_tag
 			);
-		echo '<b>nama file : </b>'.$image_name;
+		//echo '<b>nama file : </b>'.$image_name;
 		$this->db->where('post_id', $id);
 		$this->db->update('posts', $post_data);
 	} // END Edit post Entry
@@ -140,7 +201,20 @@ class Posts_Model extends CI_Model {
 	public function get_table_posts()
 	{
 		$query = $this->db->get('posts');
-		return $query->result();
+		return $query;
+	}
+	public function get_filter_posts()
+	{
+		$array = array('post_location' => $name, 'post_type' => $title, 'post_status' => $status,
+									'post_author' => $name, 'post_date' => $title, 'post_categories' => $status);
+		$this->db->where($array);
+		$query = $this->db->get('posts');
+		return $query;
+	}
+	public function get_table_posts_pag($limit, $start)
+	{
+		$query = $this->db->get('posts', $limit, $start);
+		return $query;
 	}
 	public function get_detail_post($id)
 	{
