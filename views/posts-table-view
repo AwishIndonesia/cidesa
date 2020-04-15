@@ -1,15 +1,18 @@
-<!-- // ----------------- CiDesa1 VIEW //  -->
+<!-- //  CiDesa2 //  -->
 <style>
 .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
   background-color: #ffeeba;
 }
 </style>
-<div id="container" class="container">
+<div id="container" class="container"> <!-- BEGIN #container -->
 
-<div id="container"><!-- BEGIN #container -->
-
+<div id="content">
+  
 <h3>Tabel Posting</h3>
-
+<nav class="navbar sticky-top navbar-light bg-light" style="background-color: #e3f2fd;  z-index:0;">
+  <a class="navbar-brand" href="<?php echo site_url();?>/posts/input_form">Tambah Posting</a>
+</nav>
+<br>
 <table class="table table-striped table-hover">
   <thead>
     <tr>
@@ -43,7 +46,7 @@
 
   </tbody>
 </table>
-
+  <?PHP echo $this->pagination->create_links(); ?>
 </div><!-- END #container -->
 
 
